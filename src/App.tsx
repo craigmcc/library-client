@@ -1,5 +1,15 @@
+// App -----------------------------------------------------------------------
+
+// Overall implementation of the entire client application.
+
+// External Modules ----------------------------------------------------------
+
 import React from 'react';
 import logo from './logo.svg';
+import "bootstrap/dist/css/bootstrap.min.css";
+
+// Internal Modules ----------------------------------------------------------
+
 import { Counter } from './features/counter/Counter';
 import './App.css';
 
