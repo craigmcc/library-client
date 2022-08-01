@@ -4,8 +4,6 @@
 
 // External Modules ----------------------------------------------------------
 
-import React from "react";
-
 // Internal Modules ----------------------------------------------------------
 
 // Enumerations --------------------------------------------------------------
@@ -32,5 +30,14 @@ export interface Library {
     notes: string;                      // Miscellaneous notes
     scope: string;                      // Scope prefix for this Library
 }
+
+// Prefixes ------------------------------------------------------------------
+
+export const AUTHOR: string = "Author";
+export const LIBRARY: string = "Library";
+export const SERIES: string = "Series";
+export const STORY: string = "Story";
+export const VOLUME :string = "Volume";
+
 
 

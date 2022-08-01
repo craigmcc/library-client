@@ -1,0 +1,25 @@
+{
+  "libraries": [
+    {
+      "id": 1,
+      "active": true,
+      "name": "Personal Library",
+      "notes": "Production information - do not run tests here",
+      "scope": "personal"
+    },
+    {
+      "id": 2,
+      "active": true,
+      "name": "Test Library",
+      "notes": "Available for testing",
+      "scope": "test"
+    },
+    {
+      "id": 3,
+      "active": false,
+      "name": "Extra Library",
+      "notes": "Extra one just for grins",
+      "scope": "extra"
+    }
+  ]
+}

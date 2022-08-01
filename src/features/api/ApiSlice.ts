@@ -12,26 +12,78 @@ import {
 // Internal Modules ----------------------------------------------------------
 
 import {
-    Library
+    Library,
+    LIBRARY,
 } from "../../types";
 
 // Public Objects ------------------------------------------------------------
 
-export const libraryApi = createApi({
-    baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/api"}),
+export const ApiSlice = createApi({
+    baseQuery: fetchBaseQuery({
+        baseUrl: "http://localhost:2999", // For testing via json-server
+        prepareHeaders(headers) {
+            // headers.set("Authorization", "xxx");
+            return headers;
+        }
+    }),
     endpoints: (builder) => ({
+
         // Library -----------------------------------------------------------
-        allLibraries: builder.query<Library, void>({
+        allLibraries: builder.query<Library[], void>({
+            providesTags: (result = [], error, arg) => [
+                { type:  LIBRARY, id: "ALL" },
+                ...result.map(({ id }) => ({type: LIBRARY, id: id })),
+            ],
             query: () => `/libraries`,
+            // TODO transformResponse to sort
         }),
         findLibrary: builder.query<Library, number>({
+            providesTags: (result, error, arg) => [
+                { type: LIBRARY, id: arg }
+            ],
             query: (libraryId) => `/libraries/${libraryId}`,
-        })
+        }),
+        insertLibrary: builder.mutation<Library, void>({
+            invalidatesTags: [
+                { type: LIBRARY, id: "ALL" }
+            ],
+            query: (library) => ({
+                body: library,
+                method: "POST",
+                url: "/libraries",
+            }),
+        }),
+        removeLibrary: builder.mutation<Library, number>({
+            invalidatesTags: (result, error, arg) => [
+                { type: LIBRARY, id: "ALL" },
+                { type: LIBRARY, id: arg }
+            ],
+            query: (libraryId) => ({
+                method: "DELETE",
+                url: `/libraries/${libraryId}`,
+            }),
+        }),
+        updateLibrary: builder.mutation<Library, { libraryId: number; body: Library }>({
+            invalidatesTags: (result, error, { libraryId }) => [
+                { type:  LIBRARY, id: "ALL" },
+                { type: LIBRARY, id: libraryId }
+            ],
+            query: ({ libraryId, body }) => ({
+                body: body,
+                method: "PUT",
+                url: `/libraries/${libraryId}`,
+            })
+        }),
+
     }),
-    reducerPath: "libraryApi",
+    reducerPath: "api", // Base name in RootState
+    tagTypes: [ LIBRARY ],
 });
 
 export const {
     useAllLibrariesQuery,
     useFindLibraryQuery,
-} = libraryApi;
+    useInsertLibraryMutation,
+    useRemoveLibraryMutation,
+    useUpdateLibraryMutation,
+} = ApiSlice;
