@@ -6,7 +6,6 @@
 
 import {
     createApi,
-    fetchBaseQuery,
 } from "@reduxjs/toolkit/query/react";
 
 // Internal Modules ----------------------------------------------------------
@@ -15,11 +14,13 @@ import {
     Library,
     LIBRARY,
 } from "../../types";
+import {apiBaseQuery} from "../../util/ApiUtil";
 import * as Sorters from "../../util/Sorters";
 
 // Public Objects ------------------------------------------------------------
 
 export const ApiSlice = createApi({
+/*
     baseQuery: fetchBaseQuery({
         baseUrl: "http://localhost:2999", // For testing via json-server
         prepareHeaders(headers) {
@@ -27,6 +28,8 @@ export const ApiSlice = createApi({
             return headers;
         }
     }),
+*/
+    baseQuery: apiBaseQuery(),
     endpoints: (builder) => ({
 
         // Library -----------------------------------------------------------
