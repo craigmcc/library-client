@@ -15,6 +15,7 @@ import {
     Library,
     LIBRARY,
 } from "../../types";
+import * as Sorters from "../../util/Sorters";
 
 // Public Objects ------------------------------------------------------------
 
@@ -30,18 +31,15 @@ export const ApiSlice = createApi({
 
         // Library -----------------------------------------------------------
         allLibraries: builder.query<Library[], void>({
-            providesTags: (models, error, arg) => {
-                const tags = [];
-                tags.push({ type: LIBRARY, id: "ALL" });
-                if (models) {
-                    models.forEach(model => {
-                        tags.push({ type: LIBRARY, id: model.id });
-                    });
-                }
-                return tags;
-            },
+            providesTags: (result) =>
+                result
+                    ? [
+                        ...result.map(({ id }) => ({ type: LIBRARY, id: id ? id : "ALL" })),
+                        { type: LIBRARY, id: "ALL" },
+                      ]
+                    : [{ type: LIBRARY, id: "ALL" }],
             query: () => `/libraries`,
-            // TODO transformResponse to sort
+            transformResponse: (response: Library[]) => Sorters.LIBRARIES(response),
         }),
         findLibrary: builder.query<Library, number>({
             providesTags: (result, error, arg) => [
