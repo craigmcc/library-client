@@ -12,7 +12,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import Navigation from "./app/Navigation";
 import Home from "./features/home/Home";
-import LibraryList from "./features/library/LibraryList";
+import LibraryView from "./features/library/LibraryView";
 
 // Public Objects ------------------------------------------------------------
 
@@ -23,7 +23,7 @@ function App() {
           <Routes>
               <Route path="/" element={<Navigation/>}>
                 <Route path="" element={<Home/>}/>
-                <Route path="/libraries" element={<LibraryList/>}/>
+                <Route path="/libraries" element={<LibraryView/>}/>
               </Route>
           </Routes>
         </Router>

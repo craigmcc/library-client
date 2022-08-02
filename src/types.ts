@@ -18,17 +18,39 @@ export enum Level {
     FATAL = "fatal",
 }
 
+// OAuth scopes
+export enum Scope {
+    ADMIN = "admin",
+    ANY = "any",
+    REGULAR = "regular",
+    SUPERUSER = "superuser",
+}
+
+// Handlers ------------------------------------------------------------------
+
+export type HandleAction = () => void; // Synonym for OnAction
+export type HandleBoolean = (newBoolean: boolean) => void;
+export type HandleDate = (date: string) => void;
+export type HandleIndex = (newIndex: number) => void;
+export type HandleMonth = (month: string) => void;
+export type HandleResults = () => Promise<object>;
+export type HandleValue = (newValue: string) => void;
+
+export type HandleLibrary = (library: Library) => void;
+
+export type ProcessLibrary = (library: Library) => Promise<Library>;
+
 // Models --------------------------------------------------------------------
 
 /**
  * Library - A collection of authors, series, stories, and volumes.
  */
 export interface Library {
-    id: number;                         // Primary key
-    active: boolean;                    // Is this Library active?
-    name: string;                       // Formal name of this Library
-    notes: string;                      // Miscellaneous notes
-    scope: string;                      // Scope prefix for this Library
+    id: number | null;                  // Primary key
+    active: boolean | null;             // Is this Library active?
+    name: string | null;                // Formal name of this Library
+    notes: string | null;               // Miscellaneous notes
+    scope: string | null;               // Scope prefix for this Library
 }
 
 // Prefixes ------------------------------------------------------------------

@@ -30,10 +30,16 @@ export const ApiSlice = createApi({
 
         // Library -----------------------------------------------------------
         allLibraries: builder.query<Library[], void>({
-            providesTags: (result = [], error, arg) => [
-                { type:  LIBRARY, id: "ALL" },
-                ...result.map(({ id }) => ({type: LIBRARY, id: id })),
-            ],
+            providesTags: (models, error, arg) => {
+                const tags = [];
+                tags.push({ type: LIBRARY, id: "ALL" });
+                if (models) {
+                    models.forEach(model => {
+                        tags.push({ type: LIBRARY, id: model.id });
+                    });
+                }
+                return tags;
+            },
             query: () => `/libraries`,
             // TODO transformResponse to sort
         }),
