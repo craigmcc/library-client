@@ -14,7 +14,7 @@ import {PlusCircleFill} from "react-bootstrap-icons";
 
 // Internal Modules ----------------------------------------------------------
 
-import { useAllLibrariesQuery } from "../api/ApiSlice";
+import { useAllLibrariesQuery } from "./LibraryApi";
 import { HandleAction, HandleLibrary/*, Library*/} from "../../types";
 
 // Incoming Properties -------------------------------------------------------

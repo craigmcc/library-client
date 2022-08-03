@@ -1,34 +1,20 @@
-// ApiSlice ------------------------------------------------------------------
+// LibraryApi ----------------------------------------------------------------
 
-// Redux slice for Redux Toolkit Query actions.
+// Redux Toolkit Query API for Library models.
 
 // External Modules ----------------------------------------------------------
 
-import {
-    createApi,
-} from "@reduxjs/toolkit/query/react";
+import {createApi} from "@reduxjs/toolkit/query/react";
 
 // Internal Modules ----------------------------------------------------------
 
-import {
-    Library,
-    LIBRARY,
-} from "../../types";
+import {Library, LIBRARY} from "../../types";
 import {apiBaseQuery} from "../../util/ApiUtil";
 import * as Sorters from "../../util/Sorters";
 
 // Public Objects ------------------------------------------------------------
 
-export const ApiSlice = createApi({
-/*
-    baseQuery: fetchBaseQuery({
-        baseUrl: "http://localhost:2999", // For testing via json-server
-        prepareHeaders(headers) {
-            // headers.set("Authorization", "xxx");
-            return headers;
-        }
-    }),
-*/
+export const LibraryApi = createApi({
     baseQuery: apiBaseQuery(),
     endpoints: (builder) => ({
 
@@ -39,9 +25,10 @@ export const ApiSlice = createApi({
                     ? [
                         ...result.map(({ id }) => ({ type: LIBRARY, id: id ? id : "ALL" })),
                         { type: LIBRARY, id: "ALL" },
-                      ]
+                    ]
                     : [{ type: LIBRARY, id: "ALL" }],
             query: () => `/libraries`,
+            // NOTE - Immutability does not matter before results are cached
             transformResponse: (response: Library[]) => Sorters.LIBRARIES(response),
         }),
         findLibrary: builder.query<Library, number>({
@@ -83,7 +70,7 @@ export const ApiSlice = createApi({
         }),
 
     }),
-    reducerPath: "api", // Base name in RootState
+    reducerPath: "libraries", // Base name in RootState
     tagTypes: [ LIBRARY ],
 });
 
@@ -93,4 +80,4 @@ export const {
     useInsertLibraryMutation,
     useRemoveLibraryMutation,
     useUpdateLibraryMutation,
-} = ApiSlice;
+} = LibraryApi;

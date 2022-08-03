@@ -4,11 +4,11 @@
 
 // External Modules ----------------------------------------------------------
 
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
+import {configureStore, Action, ThunkAction} from '@reduxjs/toolkit';
 
 // Internal Modules ----------------------------------------------------------
 
-import { ApiSlice } from "../features/api/ApiSlice";
+import {LibraryApi} from "../features/library/LibraryApi";
 import counterReducer from '../features/counter/counterSlice';
 
 // Public Objects ------------------------------------------------------------
@@ -16,10 +16,10 @@ import counterReducer from '../features/counter/counterSlice';
 export const store = configureStore({
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware()
-        .concat(ApiSlice.middleware);
+        .concat(LibraryApi.middleware);
   },
   reducer: {
-    [ApiSlice.reducerPath]: ApiSlice.reducer,
+    [LibraryApi.reducerPath]: LibraryApi.reducer,
     counter: counterReducer,
   },
 });
