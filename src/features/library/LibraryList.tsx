@@ -16,6 +16,7 @@ import {PlusCircleFill} from "react-bootstrap-icons";
 
 import { useAllLibrariesQuery } from "./LibraryApi";
 import { HandleAction, HandleLibrary/*, Library*/} from "../../types";
+import FetchingProgress from "../../components/FetchingProgress";
 
 // Incoming Properties -------------------------------------------------------
 
@@ -28,7 +29,7 @@ export interface Props {
 
 const LibraryList = (props: Props) => {
 
-    const { data } = useAllLibrariesQuery();
+    const { data, error, isFetching } = useAllLibrariesQuery();
     const libraries = data ? data : [];
 
     // Handle request to add a Library
@@ -47,6 +48,11 @@ const LibraryList = (props: Props) => {
 
     return (
         <Container fluid id="LibraryList">
+            <FetchingProgress
+                error={error as Error}
+                loading={isFetching}
+                message="Fetching selected Libraries"
+            />
             <Row className="mb-3">
                 <Col className="text-center">
                     <PlusCircleFill
