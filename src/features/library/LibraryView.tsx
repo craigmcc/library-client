@@ -8,6 +8,7 @@ import React, {/*useContext, */useEffect, useState} from "react";
 
 // Internal Modules ----------------------------------------------------------
 
+import {useUpdateLibraryMutation} from "./LibraryApi";
 //import LibraryContext from "./LibraryContext";
 import LibraryForm from "./LibraryForm";
 import LibraryList from "./LibraryList";
@@ -42,7 +43,9 @@ const LibraryView = () => {
     const [library, setLibrary] = useState<Library>(EMPTY);
     const [view, setView] = useState<View>(View.OPTIONS);
 
-/*
+    const [updateLibrary, updateResult] = useUpdateLibraryMutation();
+
+    /*
     const mutateLibrary = useMutateLibrary({
         alertPopup: false,
     });
@@ -126,8 +129,11 @@ const LibraryView = () => {
 
     // Handle request to update an existing Library
     const handleUpdate: HandleLibrary = async (theLibrary) => {
-        alert(`LibraryView.handleUpdate(${JSON.stringify(theLibrary)})`);
-/*
+        console.log(`LibraryView.handleUpdate(${JSON.stringify(theLibrary)})`);
+        const result = await updateLibrary({libraryId: theLibrary.id ? theLibrary.id : 0, body: theLibrary});
+        console.log(`Update Return = ${JSON.stringify(result)}`);
+        console.log(`Update Result = ${JSON.stringify(updateResult)}`);
+        /*
         const updated = await mutateLibrary.update(theLibrary);
         logger.debug({
             context: "LibraryView.handleUpdate",
