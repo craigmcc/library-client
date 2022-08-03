@@ -17,8 +17,6 @@ import * as Sorters from "../../util/Sorters";
 export const LibraryApi = createApi({
     baseQuery: apiBaseQuery(),
     endpoints: (builder) => ({
-
-        // Library -----------------------------------------------------------
         allLibraries: builder.query<Library[], void>({
             providesTags: (result) =>
                 result
@@ -68,7 +66,6 @@ export const LibraryApi = createApi({
                 url: `/libraries/${libraryId}`,
             })
         }),
-
     }),
     reducerPath: "libraries", // Base name in RootState
     tagTypes: [ LIBRARY ],
