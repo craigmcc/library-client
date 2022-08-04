@@ -1,6 +1,6 @@
-// LibrarySegment ------------------------------------------------------------
+// LibraryView ---------------------------------------------------------------
 
-// Consolidated segment for listing and editing Library objects.
+// Consolidated view for listing and editing Library objects.
 
 // External Modules ----------------------------------------------------------
 
@@ -8,13 +8,17 @@ import React, {/*useContext, */useEffect, useState} from "react";
 
 // Internal Modules ----------------------------------------------------------
 
-import {useUpdateLibraryMutation} from "./LibraryApi";
+import {
+    useInsertLibraryMutation,
+    useRemoveLibraryMutation,
+    useUpdateLibraryMutation
+} from "./LibraryApi";
 //import LibraryContext from "./LibraryContext";
 import LibraryForm from "./LibraryForm";
 import LibraryList from "./LibraryList";
 //import LoginContext from "../login/LoginContext";
 import {HandleAction, HandleLibrary, Library/*, Scope*/} from "../../types";
-//import useMutateLibrary from "../../hooks/useMutateLibrary";
+import MutatingProgress from "../../components/MutatingProgress";
 import logger from "../../util/ClientLogger";
 
 // Component Details ---------------------------------------------------------
@@ -41,15 +45,12 @@ const LibraryView = () => {
     const [canRemove, setCanRemove] = useState<boolean>(false);
     const [canUpdate, setCanUpdate] = useState<boolean>(false);
     const [library, setLibrary] = useState<Library>(EMPTY);
+    const [message, setMessage] = useState<string>("");
     const [view, setView] = useState<View>(View.OPTIONS);
 
-    const [updateLibrary, updateResult] = useUpdateLibraryMutation();
-
-    /*
-    const mutateLibrary = useMutateLibrary({
-        alertPopup: false,
-    });
-*/
+    const [insertLibrary, {error: insertError, isLoading: insertLoading}] = useInsertLibraryMutation();
+    const [removeLibrary, {error: removeError, isLoading: removeLoading}] = useRemoveLibraryMutation();
+    const [updateLibrary, {error: updateError, isLoading: updateLoading}] = useUpdateLibraryMutation();
 
     useEffect(() => {
 
@@ -93,30 +94,22 @@ const LibraryView = () => {
 
     // Handle insert of a new Library
     const handleInsert: HandleLibrary = async (theLibrary) => {
-        alert(`LibraryView.handleInsert(${JSON.stringify(theLibrary)})`);
-/*
-        const inserted = await mutateLibrary.insert(theLibrary);
-        logger.debug({
-            context: "LibraryView.handleInsert",
-            library: Abridgers.LIBRARY(inserted),
-        });
-*/
+//        console.log(`handleInsert(${JSON.stringify(theLibrary)}`);
+        setMessage(`Inserting Library '${theLibrary.name}`);
+        /*const result = */await insertLibrary(theLibrary);
+//        console.log(`Insert Result: ${JSON.stringify(result)}`);
+        setLibrary({ ...EMPTY});
         setView(View.OPTIONS);
-//        libraryContext.handleRefresh();
     }
 
     // Handle remove of an existing Library
     const handleRemove: HandleLibrary = async (theLibrary) => {
-        alert(`LibraryView.handleRemove(${JSON.stringify(theLibrary)}`);
-/*
-        const removed = await mutateLibrary.remove(theLibrary);
-        logger.debug({
-            context: "LibraryView.handleRemove",
-            library: Abridgers.LIBRARY(removed),
-        });
-*/
+//        console.log(`LibraryView.handleRemove(${JSON.stringify(theLibrary)})`);
+        setMessage(`Removing Library '${theLibrary.name}')`);
+        /*const result = */await removeLibrary(theLibrary.id!);
+//        console.log(`Remove Return = ${JSON.stringify(result)}`);
+        setLibrary({ ...EMPTY});
         setView(View.OPTIONS);
-//        libraryContext.handleRefresh();
     }
 
     // Handle return from View.DETAILS to redisplay View.OPTIONS
@@ -124,28 +117,38 @@ const LibraryView = () => {
         logger.debug({
             context: "LibraryView.handleReturn",
         });
+        setLibrary({ ...EMPTY});
         setView(View.OPTIONS);
     }
 
     // Handle request to update an existing Library
     const handleUpdate: HandleLibrary = async (theLibrary) => {
-        console.log(`LibraryView.handleUpdate(${JSON.stringify(theLibrary)})`);
-        const result = await updateLibrary({libraryId: theLibrary.id ? theLibrary.id : 0, body: theLibrary});
-        console.log(`Update Return = ${JSON.stringify(result)}`);
-        console.log(`Update Result = ${JSON.stringify(updateResult)}`);
-        /*
-        const updated = await mutateLibrary.update(theLibrary);
-        logger.debug({
-            context: "LibraryView.handleUpdate",
-            library: Abridgers.LIBRARY(updated),
-        });
-*/
+//        console.log(`LibraryView.handleUpdate(${JSON.stringify(theLibrary)})`);
+        setMessage(`Updating Library '${theLibrary.name}`);
+        /*const result = */await updateLibrary({libraryId: theLibrary.id!, body: theLibrary});
+//        console.log(`Update Return = ${JSON.stringify(result)}`);
+        setLibrary({ ...EMPTY});
         setView(View.OPTIONS);
-//        libraryContext.handleRefresh();
     }
 
     return (
         <>
+
+            <MutatingProgress
+                error={insertError as Error}
+                executing={insertLoading}
+                message={message}
+            />
+            <MutatingProgress
+                error={removeError as Error}
+                executing={removeLoading}
+                message={message}
+            />
+            <MutatingProgress
+                error={updateError as Error}
+                executing={updateLoading}
+                message={message}
+            />
 
             {(view === View.DETAILS) ? (
                 <LibraryForm

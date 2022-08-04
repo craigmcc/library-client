@@ -11,7 +11,7 @@
       "id": 2,
       "active": true,
       "name": "Test Library",
-      "notes": "Available for testing 3",
+      "notes": "Available for testing",
       "scope": "test"
     },
     {

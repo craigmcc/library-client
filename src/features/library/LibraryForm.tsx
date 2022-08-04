@@ -11,6 +11,7 @@ import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
+import {CaretLeftSquare} from "react-bootstrap-icons";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -24,7 +25,7 @@ import {
     validateLibraryNameUnique,
 } from "../../util/AsyncValidators";
 */
-//import {validateLibraryScope} from "../../util/ApplicationValidators";
+import {validateLibraryScope} from "../../util/ApplicationValidators";
 
 // Incoming Properties ------------------------------------------------------
 
@@ -90,13 +91,11 @@ const LibraryForm = (props: Props) => {
         scope: Yup.string()
             .nullable()                 // Groan -- Javascript thinks "" is falsy
             .required("Scope is required")
-/*
             .test("valid-scope",
                 "Only alphanumeric (a-z, A-Z, 0-9) characters are allowed",
                 function(value) {
                     return validateLibraryScope(value ? value : undefined);
                 })
-*/
         /* NOTE - server side does not enforce this (no uniqueness constraint)
                     .test("unique-scope",
                         "That scope is already in use",
@@ -120,6 +119,12 @@ const LibraryForm = (props: Props) => {
             <Container id="LibraryDetails">
 
                 <Row className="mb-3">
+                    <Col className="text-start">
+                        <CaretLeftSquare
+                            onClick={props.handleReturn}
+                            size={32}
+                        />
+                    </Col>
                     <Col className="text-center">
                         <strong>
                             {(adding)? (
@@ -131,12 +136,6 @@ const LibraryForm = (props: Props) => {
                         </strong>
                     </Col>
                     <Col className="text-end">
-                        <Button
-                            onClick={() => props.handleReturn()}
-                            size="sm"
-                            type="button"
-                            variant="secondary"
-                        >Back</Button>
                     </Col>
                 </Row>
 

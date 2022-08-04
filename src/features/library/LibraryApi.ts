@@ -35,7 +35,7 @@ export const LibraryApi = createApi({
             ],
             query: (libraryId) => `/libraries/${libraryId}`,
         }),
-        insertLibrary: builder.mutation<Library, void>({
+        insertLibrary: builder.mutation<Library, Partial<Library>>({
             invalidatesTags: [
                 { type: LIBRARY, id: "ALL" }
             ],
@@ -55,7 +55,7 @@ export const LibraryApi = createApi({
                 url: `/libraries/${libraryId}`,
             }),
         }),
-        updateLibrary: builder.mutation<Library, { libraryId: number; body: Library }>({
+        updateLibrary: builder.mutation<Library, { libraryId: number; body: Partial<Library> }>({
             invalidatesTags: (result, error, { libraryId }) => [
                 { type:  LIBRARY, id: "ALL" },
                 { type: LIBRARY, id: libraryId }
