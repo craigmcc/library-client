@@ -5,7 +5,7 @@
 // External Modules ----------------------------------------------------------
 
 import {BaseQueryFn, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
-import axios, {AxiosRequestConfig, AxiosError} from "axios";
+//import axios, {AxiosRequestConfig, AxiosError} from "axios";
 
 // Internal Modules ----------------------------------------------------------
 
@@ -37,6 +37,7 @@ export const apiBaseQuery = (baseUrl: string = BASE_URL()): BaseQueryFn => {
  * @param baseUrl                       Base URL to be configured
  */
 // Can customize headers etc. with interceptors
+/*
 const axiosBaseQuery = (baseUrl: string): BaseQueryFn<{
     url: string
     method: AxiosRequestConfig["method"]
@@ -66,6 +67,7 @@ const axiosBaseQuery = (baseUrl: string): BaseQueryFn<{
         }
     }
 }
+*/
 
 /**
  * Return a baseQuery implementation around the built in fetch interface.
