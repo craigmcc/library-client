@@ -4,18 +4,19 @@
 
 // External Modules ----------------------------------------------------------
 
-import React/*, {useContext, useEffect, useState}*/ from "react";
+import React, {/*useContext, useEffect, */useState} from "react";
 //import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
 import {PlusCircleFill} from "react-bootstrap-icons";
+import {CheckBox} from "@craigmcc/shared-react";
 
 // Internal Modules ----------------------------------------------------------
 
 import { useAllLibrariesQuery } from "./LibraryApi";
-import { HandleAction, HandleLibrary/*, Library*/} from "../../types";
+import {HandleAction, HandleBoolean, HandleLibrary/*, Library*/} from "../../types";
 import FetchingProgress from "../../components/FetchingProgress";
 
 // Incoming Properties -------------------------------------------------------
@@ -29,8 +30,16 @@ export interface Props {
 
 const LibraryList = (props: Props) => {
 
-    const { data, error, isFetching } = useAllLibrariesQuery();
+    const [active, setActive] = useState<boolean>(false);
+    const { data, error, isFetching } = useAllLibrariesQuery( active ? {
+        active: true,
+    } : {});
     const libraries = data ? data : [];
+
+    // Set the current active flag
+    const handleActive: HandleBoolean = (theActive) => {
+        setActive(theActive);
+    }
 
     // Handle request to add a Library
     const handleAdd: HandleAction = () => {
@@ -54,7 +63,18 @@ const LibraryList = (props: Props) => {
                 message="Fetching selected Libraries"
             />
             <Row className="mb-3">
+                <Col className="text-start">
+                    <span>TODO: Search Bar</span>
+                </Col>
                 <Col className="text-center">
+                    <CheckBox
+                        handleChange={handleActive}
+                        label="Active Libraries Only?"
+                        name="activeOnly"
+                        value={active}
+                    />
+                </Col>
+                <Col className="text-end">
                     <PlusCircleFill
                         color="primary"
                         onClick={handleAdd}
@@ -93,7 +113,7 @@ const LibraryList = (props: Props) => {
                 </Table>
             </Row>
             <Row className="mb-3">
-                <Col className="text-center">
+                <Col className="text-end">
                     <PlusCircleFill
                         color="primary"
                         onClick={handleAdd}

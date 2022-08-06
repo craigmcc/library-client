@@ -12,12 +12,30 @@ import {Library, LIBRARY} from "../../types";
 import {apiBaseQuery} from "../../util/ApiUtil";
 import * as Sorters from "../../util/Sorters";
 
+// Parameter Types -----------------------------------------------------------
+
+interface includeLibraryParams {
+    withAuthors?: boolean;              // Include child Authors
+    withSeries?: boolean;               // Include child Series
+    withStories?: boolean;              // Include child Stories
+    withVolumes?: boolean;              // Include chld Volumes
+}
+
+interface matchLibraryParams {
+    active?: boolean;                   // Select active Libraries
+    name?: string;                      // Wildcard match on name
+    scope?: string;                     // Exact match on scope
+}
+
+export interface allLibrariesParams extends includeLibraryParams, matchLibraryParams {
+}
+
 // Public Objects ------------------------------------------------------------
 
 export const LibraryApi = createApi({
     baseQuery: apiBaseQuery(),
     endpoints: (builder) => ({
-        allLibraries: builder.query<Library[], void>({
+        allLibraries: builder.query<Library[], allLibrariesParams>({
             providesTags: (result) =>
                 result
                     ? [
@@ -25,9 +43,27 @@ export const LibraryApi = createApi({
                         { type: LIBRARY, id: "ALL" },
                     ]
                     : [{ type: LIBRARY, id: "ALL" }],
-            query: () => `/libraries`,
+//            query: () => `/libraries`,
+            query: (params) => {
+                let appended: string = "";
+                if (params) {
+                    const output = new URLSearchParams(params as any).toString();
+                    if (output.length > 0) {
+                        appended = `?${output}`;
+                    }
+                }
+                return `/libraries${appended}`;
+            },
             // NOTE - Immutability does not matter before results are cached
             transformResponse: (response: Library[]) => Sorters.LIBRARIES(response),
+        }),
+        exactLibrary: builder.query<Library, string>({
+/*
+            providesTags: (result, error, arg) => [
+                { type: LIBRARY, id: arg }
+            ],
+*/
+            query: (name) => `/libraries/exact/${name}`,
         }),
         findLibrary: builder.query<Library, number>({
             providesTags: (result, error, arg) => [
@@ -73,6 +109,7 @@ export const LibraryApi = createApi({
 
 export const {
     useAllLibrariesQuery,
+    useExactLibraryQuery,
     useFindLibraryQuery,
     useInsertLibraryMutation,
     useRemoveLibraryMutation,
