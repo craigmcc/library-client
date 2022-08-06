@@ -18,12 +18,12 @@ interface includeLibraryParams {
     withAuthors?: boolean;              // Include child Authors
     withSeries?: boolean;               // Include child Series
     withStories?: boolean;              // Include child Stories
-    withVolumes?: boolean;              // Include chld Volumes
+    withVolumes?: boolean;              // Include child Volumes
 }
 
 interface matchLibraryParams {
     active?: boolean;                   // Select active Libraries
-    name?: string;                      // Wildcard match on name
+    name_like?: string;                      // Wildcard match on name TODO _like for json-server
     scope?: string;                     // Exact match on scope
 }
 
