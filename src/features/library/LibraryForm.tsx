@@ -20,7 +20,7 @@ import {CheckBoxField, TextField} from "@craigmcc/shared-react";
 // Internal Modules ----------------------------------------------------------
 
 import {HandleAction, HandleLibrary, Library} from "../../types";
-import {validateLibraryNameUnique} from "../../util/AsyncValidators";
+//import {validateLibraryNameUnique} from "../../util/AsyncValidators";
 import {validateLibraryScope} from "../../util/ApplicationValidators";
 
 // Incoming Properties ------------------------------------------------------
