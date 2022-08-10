@@ -74,59 +74,42 @@ const LibraryView = () => {
         const theLibrary: Library = {
             ...EMPTY,
         };
-        logger.debug({
-            context: "LibraryView.handleAdd",
-            library: theLibrary,
-        });
         setLibrary(theLibrary);
         setView(View.DETAILS);
     }
 
     // Handle selection of a Library to edit details
     const handleEdit: HandleLibrary = (theLibrary) => {
-        logger.debug({
-            context: "LibraryView.handleEdit",
-            library: theLibrary,
-        });
         setLibrary(theLibrary);
         setView(View.DETAILS);
     }
 
     // Handle insert of a new Library
     const handleInsert: HandleLibrary = async (theLibrary) => {
-//        console.log(`handleInsert(${JSON.stringify(theLibrary)}`);
         setMessage(`Inserting Library '${theLibrary.name}`);
-        /*const result = */await insertLibrary(theLibrary);
-//        console.log(`Insert Result: ${JSON.stringify(result)}`);
+        await insertLibrary(theLibrary);
         setLibrary({ ...EMPTY});
         setView(View.OPTIONS);
     }
 
     // Handle remove of an existing Library
     const handleRemove: HandleLibrary = async (theLibrary) => {
-//        console.log(`LibraryView.handleRemove(${JSON.stringify(theLibrary)})`);
         setMessage(`Removing Library '${theLibrary.name}')`);
-        /*const result = */await removeLibrary(theLibrary.id!);
-//        console.log(`Remove Return = ${JSON.stringify(result)}`);
+        await removeLibrary({ libraryId: theLibrary.id! });
         setLibrary({ ...EMPTY});
         setView(View.OPTIONS);
     }
 
     // Handle return from View.DETAILS to redisplay View.OPTIONS
     const handleReturn: HandleAction = () => {
-        logger.debug({
-            context: "LibraryView.handleReturn",
-        });
         setLibrary({ ...EMPTY});
         setView(View.OPTIONS);
     }
 
     // Handle request to update an existing Library
     const handleUpdate: HandleLibrary = async (theLibrary) => {
-//        console.log(`LibraryView.handleUpdate(${JSON.stringify(theLibrary)})`);
         setMessage(`Updating Library '${theLibrary.name}`);
-        /*const result = */await updateLibrary({libraryId: theLibrary.id!, body: theLibrary});
-//        console.log(`Update Return = ${JSON.stringify(result)}`);
+        await updateLibrary({libraryId: theLibrary.id!, library: theLibrary});
         setLibrary({ ...EMPTY});
         setView(View.OPTIONS);
     }

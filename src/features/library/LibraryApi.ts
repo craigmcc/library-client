@@ -14,8 +14,17 @@ import * as Sorters from "../../util/Sorters";
 
 // Parameter Types -----------------------------------------------------------
 
+export interface allLibrariesParams
+    extends includeLibraryParams, matchLibraryParams, paginationParams {
+}
+
 export interface exactLibraryParams {
     name: string;                       // Exact match on name
+    params?: includeLibraryParams;      // Other parameters
+}
+
+export interface findLibraryParams {
+    libraryId: number;                  // ID of the requested Library
     params?: includeLibraryParams;      // Other parameters
 }
 
@@ -32,8 +41,13 @@ interface matchLibraryParams {
     scope?: string;                     // Exact match on scope
 }
 
-export interface allLibrariesParams
-    extends includeLibraryParams, matchLibraryParams, paginationParams {
+export interface removeLibraryParams {
+    libraryId: number;                  // ID of the Library to remove
+}
+
+export interface updateLibraryParams {
+    libraryId: number;                  // ID of the Library to update
+    library: Partial<Library>;          // Library properties to update
 }
 
 // Public Objects ------------------------------------------------------------
@@ -49,20 +63,7 @@ export const LibraryApi = createApi({
                         { type: LIBRARY, id: "ALL" },
                     ]
                     : [{ type: LIBRARY, id: "ALL" }],
-//            query: () => `/libraries`,
             query: (params) => appendQueryParameters("/libraries", params),
-/*
-            {
-                let appended: string = "";
-                if (params) {
-                    const output = new URLSearchParams(params as any).toString();
-                    if (output.length > 0) {
-                        appended = `?${output}`;
-                    }
-                }
-                return `/libraries${appended}`;
-            },
-*/
             // NOTE - Immutability does not matter before results are cached
             transformResponse: (response: Library[]) => Sorters.LIBRARIES(response),
         }),
@@ -73,11 +74,12 @@ export const LibraryApi = createApi({
             query: (params) =>
                 appendQueryParameters(`/libraries/exact/${params.name}`, params.params),
         }),
-        findLibrary: builder.query<Library, number>({
+        findLibrary: builder.query<Library, findLibraryParams>({
             providesTags: (result, error, arg) => [
-                { type: LIBRARY, id: arg }
+                { type: LIBRARY, id: arg.libraryId }
             ],
-            query: (libraryId) => `/libraries/${libraryId}`,
+            query: (params) =>
+                appendQueryParameters(`/libraries/${params.libraryId}`, params.params),
         }),
         insertLibrary: builder.mutation<Library, Partial<Library>>({
             invalidatesTags: [
@@ -89,25 +91,25 @@ export const LibraryApi = createApi({
                 url: "/libraries",
             }),
         }),
-        removeLibrary: builder.mutation<Library, number>({
+        removeLibrary: builder.mutation<Library, removeLibraryParams>({
             invalidatesTags: (result, error, arg) => [
                 { type: LIBRARY, id: "ALL" },
-                { type: LIBRARY, id: arg }
+                { type: LIBRARY, id: arg.libraryId }
             ],
-            query: (libraryId) => ({
+            query: (params) => ({
                 method: "DELETE",
-                url: `/libraries/${libraryId}`,
+                url: `/libraries/${params.libraryId}`,
             }),
         }),
-        updateLibrary: builder.mutation<Library, { libraryId: number; body: Partial<Library> }>({
+        updateLibrary: builder.mutation<Library, updateLibraryParams>({
             invalidatesTags: (result, error, { libraryId }) => [
                 { type:  LIBRARY, id: "ALL" },
                 { type: LIBRARY, id: libraryId }
             ],
-            query: ({ libraryId, body }) => ({
-                body: body,
+            query: (params) => ({
+                body: params.library,
                 method: "PUT",
-                url: `/libraries/${libraryId}`,
+                url: `/libraries/${params.libraryId}`,
             })
         }),
     }),
