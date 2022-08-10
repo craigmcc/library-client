@@ -9,19 +9,18 @@
 
 import {Library} from "../types";
 import {store} from "../app/store";
-import {LibraryApi} from "../features/library/LibraryApi";
+import {exactLibraryParams, LibraryApi} from "../features/library/LibraryApi";
 
 // Public Objects ------------------------------------------------------------
 
 export const validateLibraryNameUnique = async (library: Library): Promise<boolean> => {
     if (library && library.name) {
-        console.log("validateLibraryNameUnique():", library);
-        const initiate = store.dispatch(LibraryApi.endpoints.exactLibrary.initiate(library.name));
-        console.log("  Initiate Result: ", initiate);
-        const selector = LibraryApi.endpoints.exactLibrary.select(library.name);
-        console.log("  selector:", selector);
+        const params: exactLibraryParams = {
+            name: library.name,
+        }
+        const initiate = store.dispatch(LibraryApi.endpoints.exactLibrary.initiate(params));
+        const selector = LibraryApi.endpoints.exactLibrary.select(params);
         const result = selector(store.getState());
-        console.log("  result:  ", result);
         const {data} = result;
         initiate.unsubscribe();
         if (data) {

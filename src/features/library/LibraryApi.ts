@@ -14,6 +14,11 @@ import * as Sorters from "../../util/Sorters";
 
 // Parameter Types -----------------------------------------------------------
 
+export interface exactLibraryParams {
+    name: string;                       // Exact match on name
+    params?: includeLibraryParams;      // Other parameters
+}
+
 interface includeLibraryParams {
     withAuthors?: boolean;              // Include child Authors
     withSeries?: boolean;               // Include child Series
@@ -61,13 +66,12 @@ export const LibraryApi = createApi({
             // NOTE - Immutability does not matter before results are cached
             transformResponse: (response: Library[]) => Sorters.LIBRARIES(response),
         }),
-        exactLibrary: builder.query<Library, string>({
-/*
+        exactLibrary: builder.query<Library, exactLibraryParams>({
             providesTags: (result, error, arg) => [
-                { type: LIBRARY, id: arg }
+                { type: LIBRARY, id: "exact:" + arg.name }
             ],
-*/
-            query: (name) => `/libraries/exact/${name}`,
+            query: (params) =>
+                appendQueryParameters(`/libraries/exact/${params.name}`, params.params),
         }),
         findLibrary: builder.query<Library, number>({
             providesTags: (result, error, arg) => [

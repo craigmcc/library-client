@@ -20,7 +20,7 @@ import {CheckBoxField, TextField} from "@craigmcc/shared-react";
 // Internal Modules ----------------------------------------------------------
 
 import {HandleAction, HandleLibrary, Library} from "../../types";
-//import {validateLibraryNameUnique} from "../../util/AsyncValidators";
+import {validateLibraryNameUnique} from "../../util/AsyncValidators";
 import {validateLibraryScope} from "../../util/ApplicationValidators";
 
 // Incoming Properties ------------------------------------------------------
@@ -73,15 +73,12 @@ const LibraryForm = (props: Props) => {
         name: Yup.string()
             .nullable()                 // Groan -- Javascript thinks "" is falsy
             .required("Name is required")
-/*
             .test("unique-name",
                 "That name is already in use",
                 async function (this) {
                     return validateLibraryNameUnique(this.parent);
                 }
-            )
-*/
-        ,
+            ),
         notes: Yup.string()
             .nullable(),
         scope: Yup.string()
