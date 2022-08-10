@@ -8,7 +8,7 @@ import {createApi} from "@reduxjs/toolkit/query/react";
 
 // Internal Modules ----------------------------------------------------------
 
-import {Library, LIBRARY} from "../../types";
+import {Library, LIBRARY, paginationParams} from "../../types";
 import {apiBaseQuery} from "../../util/ApiUtil";
 import * as Sorters from "../../util/Sorters";
 
@@ -23,11 +23,12 @@ interface includeLibraryParams {
 
 interface matchLibraryParams {
     active?: boolean;                   // Select active Libraries
-    name_like?: string;                      // Wildcard match on name TODO _like for json-server
+    name?: string;                      // Wildcard match on name
     scope?: string;                     // Exact match on scope
 }
 
-export interface allLibrariesParams extends includeLibraryParams, matchLibraryParams {
+export interface allLibrariesParams
+    extends includeLibraryParams, matchLibraryParams, paginationParams {
 }
 
 // Public Objects ------------------------------------------------------------

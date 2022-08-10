@@ -15,7 +15,8 @@ import {BaseQueryFn, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
  * Return the base URL we should pass to for API slices.
  */
 export const BASE_URL = () : string => {
-    return "http://localhost:2999"; // For testing via json-server
+    return "/api"; // For testing via local dev server (see "proxy" in package.json)
+//    return "http://localhost:2999"; // For testing via json-server
 }
 
 /**

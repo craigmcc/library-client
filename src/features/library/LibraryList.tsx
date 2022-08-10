@@ -42,7 +42,7 @@ const LibraryList = (props: Props) => {
             theParams.active = true;
         }
         if (name.length > 0) {
-            theParams.name_like = name;
+            theParams.name = name;
         }
         setParams(theParams);
     }, [active, name]);

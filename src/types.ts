@@ -53,6 +53,13 @@ export interface Library {
     scope: string | null;               // Scope prefix for this Library
 }
 
+// Params --------------------------------------------------------------------
+
+export interface paginationParams {
+    limit?: number;                     // Maximum number of rows to return [no limit]
+    offset?: number;                    // Zero-relative offset to first returned row [0]
+}
+
 // Prefixes ------------------------------------------------------------------
 
 export const AUTHOR: string = "Author";
