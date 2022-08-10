@@ -28,6 +28,24 @@ export const apiBaseQuery = (baseUrl: string = BASE_URL()): BaseQueryFn => {
     return standardBaseQuery(baseUrl);
 }
 
+/**
+ * Append the specified query parameters (if any) to the specified URL, and return
+ * the updated string.
+ *
+ * @param url                           URL to be appended to
+ * @param params                        Parameters (if any) to be appended
+ */
+export const appendQueryParameters = (url: string, params?: any): string => {
+    let appended: string = "";
+    if (params) {
+        const output = new URLSearchParams(params).toString();
+        if (output.length > 0) {
+            appended = `?${output}`;
+        }
+    }
+    return `${url}${appended}`;
+}
+
 // Private Objects -----------------------------------------------------------
 
 /**

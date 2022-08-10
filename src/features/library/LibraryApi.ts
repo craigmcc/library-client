@@ -9,7 +9,7 @@ import {createApi} from "@reduxjs/toolkit/query/react";
 // Internal Modules ----------------------------------------------------------
 
 import {Library, LIBRARY, paginationParams} from "../../types";
-import {apiBaseQuery} from "../../util/ApiUtil";
+import {apiBaseQuery, appendQueryParameters} from "../../util/ApiUtil";
 import * as Sorters from "../../util/Sorters";
 
 // Parameter Types -----------------------------------------------------------
@@ -45,7 +45,9 @@ export const LibraryApi = createApi({
                     ]
                     : [{ type: LIBRARY, id: "ALL" }],
 //            query: () => `/libraries`,
-            query: (params) => {
+            query: (params) => appendQueryParameters("/libraries", params),
+/*
+            {
                 let appended: string = "";
                 if (params) {
                     const output = new URLSearchParams(params as any).toString();
@@ -55,6 +57,7 @@ export const LibraryApi = createApi({
                 }
                 return `/libraries${appended}`;
             },
+*/
             // NOTE - Immutability does not matter before results are cached
             transformResponse: (response: Library[]) => Sorters.LIBRARIES(response),
         }),
