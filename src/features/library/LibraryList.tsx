@@ -10,6 +10,7 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
 import {PlusCircleFill} from "react-bootstrap-icons";
+import {skipToken} from "@reduxjs/toolkit/query/react";
 import {CheckBox, SearchBar} from "@craigmcc/shared-react";
 
 // Internal Modules ----------------------------------------------------------
@@ -17,6 +18,7 @@ import {CheckBox, SearchBar} from "@craigmcc/shared-react";
 import {allLibrariesParams, useAllLibrariesQuery} from "./LibraryApi";
 import {HandleAction, HandleBoolean, HandleLibrary, HandleValue/*, Library*/} from "../../types";
 import FetchingProgress from "../../components/FetchingProgress";
+import logger from "../../util/ClientLogger";
 
 // Incoming Properties -------------------------------------------------------
 
@@ -31,9 +33,9 @@ const LibraryList = (props: Props) => {
 
     const [active, setActive] = useState<boolean>(false);
     const [name, setName] = useState<string>("");
-    const [params, setParams] = useState<allLibrariesParams>({});
+    const [params, setParams] = useState<allLibrariesParams | null>(null);
 
-    const { data, error, isFetching } = useAllLibrariesQuery(params);
+    const { data, error, isFetching } = useAllLibrariesQuery(params ?? skipToken);
     const libraries = data ? data : [];
 
     useEffect(() => {
@@ -44,6 +46,10 @@ const LibraryList = (props: Props) => {
         if (name.length > 0) {
             theParams.name = name;
         }
+        logger.debug({
+            context: "LibraryList.useEffect",
+            params: theParams,
+        })
         setParams(theParams);
     }, [active, name]);
 

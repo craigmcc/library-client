@@ -1,6 +1,6 @@
-// Library -------------------------------------------------------------------
+// UserForm ------------------------------------------------------------------
 
-// Detail editing form for Library objects.
+// Detail editing form for User objects.
 
 // External Modules ----------------------------------------------------------
 
@@ -19,26 +19,25 @@ import {CheckBoxField, TextField} from "@craigmcc/shared-react";
 
 // Internal Modules ----------------------------------------------------------
 
-import {HandleAction, HandleLibrary, Library} from "../../types";
-import {validateLibraryNameUnique} from "../../util/AsyncValidators";
-import {validateLibraryScope} from "../../util/ApplicationValidators";
+import {HandleAction, HandleUser, User} from "../../types";
+import {validateUserUsernameUnique} from "../../util/AsyncValidators";
 
 // Incoming Properties ------------------------------------------------------
 
 export interface Props {
     autoFocus?: boolean;                // First element receive autoFocus? [false]
-    handleInsert?: HandleLibrary;       // Handle Library insert request [not allowed]
-    handleRemove?: HandleLibrary;       // Handle Library remove request [not allowed]
+    handleInsert?: HandleUser;          // Handle User insert request [not allowed]
+    handleRemove?: HandleUser;          // Handle User remove request [not allowed]
     handleReturn: HandleAction;         // Handle return to previous view
-    handleUpdate?: HandleLibrary;       // Handle Library update request [not allowed
-    library: Library;                   // Initial values (id < 0 for adding)
+    handleUpdate?: HandleUser;          // Handle User update request [not allowed]
+    user: User;                         // Initial values (id < 0 for adding)
 }
 
 // Component Details ---------------------------------------------------------
 
-const LibraryForm = (props: Props) => {
+const UserForm = (props: Props) => {
 
-    const [adding] = useState<boolean>(!props.library.id);
+    const [adding] = useState<boolean>(!props.user.id);
     const [showConfirm, setShowConfirm] = useState<boolean>(false);
 
     const onConfirm = (): void => {
@@ -52,54 +51,54 @@ const LibraryForm = (props: Props) => {
     const onConfirmPositive = (): void => {
         setShowConfirm(false);
         if (props.handleRemove) {
-            props.handleRemove(props.library);
+            props.handleRemove(props.user)
         }
     }
 
-    const onSubmit: SubmitHandler<Library> = (values) => {
-        const theLibrary: Library = {
-            ...props.library,
+    const onSubmit: SubmitHandler<User> = (values) => {
+        const theUser: User = {
+            ...props.user,
             ...values,
         };
         if (adding && props.handleInsert) {
-            props.handleInsert(theLibrary);
+            props.handleInsert(theUser);
         } else if (!adding && props.handleUpdate) {
-            props.handleUpdate(theLibrary);
+            props.handleUpdate(theUser);
         }
+    }
+
+    // NOTE - there is no server-side equivalent for this because there is
+    // not an individual logged-in user performing the request
+    const validateRequestedScope = (requested: string | undefined): boolean => {
+        return true; // NOTE - must implement server side somehow
     }
 
     const validationSchema = Yup.object().shape({
         active: Yup.boolean(),
-        name: Yup.string()
-            .nullable()                 // Groan -- Javascript thinks "" is falsy
-            .required("Name is required")
-            .test("unique-name",
-                "That name is already in use",
-                async function (this) {
-                    return validateLibraryNameUnique(this.parent);
-                }
-            ),
-        notes: Yup.string()
+        googleBooksApiKey: Yup.string()
             .nullable(),
+        name: Yup.string()
+            .required("Name is required"),
+        password: Yup.string()
+            .nullable(), // NOTE - required on add, optional on edit
         scope: Yup.string()
-            .nullable()                 // Groan -- Javascript thinks "" is falsy
             .required("Scope is required")
-            .test("valid-scope",
-                "Only alphanumeric (a-z, A-Z, 0-9) characters are allowed",
+            .test("allowed-scope",
+                "You are not allowed to assign a scope you do not possess",
                 function(value) {
-                    return validateLibraryScope(value ? value : undefined);
-                })
-        /* NOTE - server side does not enforce this (no uniqueness constraint)
-                    .test("unique-scope",
-                        "That scope is already in use",
-                        async function(value) {
-                            return validateLibraryScopeUnique(ToModel.LIBRARY(this.parent));
-                        }),
-        */
+                    return validateRequestedScope(value);
+                }),
+        username: Yup.string()
+            .required("Username is required")
+            .test("unique-username",
+                "That username is already in use",
+                async function (this) {
+                    return validateUserUsernameUnique(this.parent);
+                }),
     });
 
-    const {formState: {errors}, handleSubmit, register} = useForm<Library>({
-        defaultValues: { ...props.library },
+    const {formState: {errors}, handleSubmit, register} = useForm<User>({
+        defaultValues: { ...props.user },
         mode: "onBlur",
         resolver: yupResolver(validationSchema),
     });
@@ -109,7 +108,7 @@ const LibraryForm = (props: Props) => {
         <>
 
             {/* Details Form */}
-            <Container id="LibraryDetails">
+            <Container id="UserDetails">
 
                 <Row className="mb-3">
                     <Col className="text-start">
@@ -125,7 +124,7 @@ const LibraryForm = (props: Props) => {
                             ) : (
                                 <span>Edit Existing</span>
                             )}
-                            &nbsp;Library
+                            &nbsp;User
                         </strong>
                     </Col>
                     <Col className="text-end">
@@ -133,7 +132,7 @@ const LibraryForm = (props: Props) => {
                 </Row>
 
                 <Form
-                    id="LibraryDetails"
+                    id="UserDetails"
                     noValidate
                     onSubmit={handleSubmit(onSubmit)}
                 >
@@ -145,28 +144,42 @@ const LibraryForm = (props: Props) => {
                             label="Name:"
                             name="name"
                             register={register}
-                            valid="Name of this Library (must be unique)."
+                            valid="Name of this User."
                         />
                         <TextField
                             errors={errors}
                             label="Scope:"
                             name="scope"
                             register={register}
-                            valid="Permission scope of this Library (must be unique)."
+                            valid="Space-separated scope(s) granted to this user."
                         />
                     </Row>
 
-                    <Row className="g-3 mb-3" id="notesRow">
+                    <Row className="g-3 mb-3" id="usernamePasswordRow">
                         <TextField
                             errors={errors}
-                            label="Notes:"
-                            name="notes"
+                            label="Username:"
+                            name="username"
                             register={register}
-                            valid="Miscellaneous notes about this Library."
+                            valid="Login username of this User (must be unique)."
+                        />
+                        <TextField
+                            errors={errors}
+                            label="Password:"
+                            name="password"
+                            register={register}
+                            valid="Login password of this User (set this ONLY on new Users or if you want to change the password for an existing User)."
                         />
                     </Row>
 
-                    <Row className="g-3 mb-3" id="activeRow">
+                    <Row className="g-3 mb-3" id="googleBooksApiKeyActiveRow">
+                        <TextField
+                            errors={errors}
+                            label="Google Books API Key:"
+                            name="googleBooksApiKey"
+                            register={register}
+                            valid="This User's API Key for Google Books (if any)."
+                        />
                         <CheckBoxField
                             errors={errors}
                             label="Active?"
@@ -175,8 +188,8 @@ const LibraryForm = (props: Props) => {
                         />
                     </Row>
 
-                    <Row className="mb-3">
-                        <Col className="col-11">
+                    <Row className="g-3 mb-3">
+                        <Col className="text-start">
                             <Button
                                 disabled={!props.handleInsert && !props.handleUpdate}
                                 size="sm"
@@ -186,9 +199,9 @@ const LibraryForm = (props: Props) => {
                                 Save
                             </Button>
                         </Col>
-                        <Col className="col-1">
+                        <Col className="text-end">
                             <Button
-                                disabled={adding || (!props.handleRemove)}
+                                disabled={adding || !props.handleRemove}
                                 onClick={onConfirm}
                                 size="sm"
                                 type="button"
@@ -218,12 +231,12 @@ const LibraryForm = (props: Props) => {
                 </Modal.Header>
                 <Modal.Body>
                     <p>
-                        Removing this Library is not reversible, and
+                        Removing this User is not reversible, and
                         <strong>
                             &nbsp;will also remove ALL related information.
                         </strong>.
                     </p>
-                    <p>Consider marking this Library as inactive instead.</p>
+                    <p>Consider marking this User as inactive instead.</p>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
@@ -250,4 +263,4 @@ const LibraryForm = (props: Props) => {
     )
 }
 
-export default LibraryForm;
+export default UserForm;

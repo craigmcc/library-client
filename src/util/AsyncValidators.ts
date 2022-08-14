@@ -7,9 +7,10 @@
 
 // Internal Modules ----------------------------------------------------------
 
-import {Library} from "../types";
+import {Library, User} from "../types";
 import {store} from "../app/store";
 import {exactLibraryParams, LibraryApi} from "../features/library/LibraryApi";
+import {exactUserParams, UserApi} from "../features/user/UserApi";
 
 // Public Objects ------------------------------------------------------------
 
@@ -32,3 +33,24 @@ export const validateLibraryNameUnique = async (library: Library): Promise<boole
         return true;
     }
 }
+
+export const validateUserUsernameUnique = async (user: User): Promise<boolean> => {
+    if (user && user.username) {
+        const params: exactUserParams = {
+            username: user.username,
+        }
+        const initiate = store.dispatch(UserApi.endpoints.exactUser.initiate(params));
+        const selector = UserApi.endpoints.exactUser.select(params);
+        const result = selector(store.getState());
+        const {data} = result;
+        initiate.unsubscribe();
+        if (data) {
+            return (data.id === user.id);
+        } else {
+            return true;
+        }
+    } else {
+        return true;
+    }
+}
+

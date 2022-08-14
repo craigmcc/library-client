@@ -15,6 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Navigation from "./app/Navigation";
 import Home from "./features/home/Home";
 import LibraryView from "./features/library/LibraryView";
+import UserView from "./features/user/UserView";
 
 // Public Objects ------------------------------------------------------------
 
@@ -35,6 +36,7 @@ function App() {
               <Route path="/" element={<Navigation/>}>
                 <Route path="" element={<Home/>}/>
                 <Route path="/libraries" element={<LibraryView/>}/>
+                <Route path="/users" element={<UserView/>}/>
               </Route>
           </Routes>
         </Router>
