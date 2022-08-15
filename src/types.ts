@@ -45,7 +45,15 @@ export type ProcessUser = (user: User) => Promise<User>;
 // Models --------------------------------------------------------------------
 
 /**
- * Library - A collection of authors, series, stories, and volumes.
+ * Credentials required to log in to this application.
+ */
+export interface Credentials {
+    password: string;                   // Login password
+    username: string;                   // Login username
+}
+
+/**
+ * A collection of authors, series, stories, and volumes.
  */
 export interface Library {
     id: number | null;                  // Primary key
@@ -56,8 +64,40 @@ export interface Library {
 }
 
 /**
- * User - An individual User allowed to log in to this application,
- * with specified scope permissions.
+ * Data related to the currently logged in user and associated tokens.
+ */
+export interface LoginData {
+    accessToken: string | null;         // Current access token (if logged in)
+    expires: Date | null;               // Access token expiration time (if logged in)
+    loggedIn: boolean;                  // Is user currently logged in?
+    refreshToken: string | null;        // Current refresh token (if logged in)
+    scope: string | null;               // Allowed scope(s) (if logged in)
+    username: string | null;            // Logged in username (if logged in)
+}
+
+/**
+ * Authentication request parameters for an OAuth authentication server.
+ */
+export interface TokenRequest {
+    grant_type: string;                 // Request type
+    password: string;                   // Request password
+    username: string;                   // Request username
+}
+
+/**
+ * Authentication successful response from an OAuth authentication server.
+ */
+export interface TokenResponse {
+    access_token: string;               // Assigned access token
+    expires_in: number;                 // Number of seconds before the access token expires
+    refresh_token?: string;             // Assigned refresh token (if any)
+    scope: string;                      // Authorized scope(s) - space separated
+    token_type: string;                 // Token type supported by this server
+}
+
+/**
+ * An individual User allowed to log in to this application, with specified
+ * scope permissions.
  */
 export interface User {
     id: number | null;                  // Primary key
@@ -82,5 +122,6 @@ export const AUTHOR: string = "Author";
 export const LIBRARY: string = "Library";
 export const SERIES: string = "Series";
 export const STORY: string = "Story";
+export const LOGIN: string = "Login";
 export const USER: string = "User";
 export const VOLUME :string = "Volume";

@@ -1,6 +1,7 @@
 // ApiUtil -------------------------------------------------------------------
 
-// Generic utility methods for model-specific ApiSlice implementations.
+// Generic utility methods for model-specific ApiSlice and OauthSlice
+// implementations.
 
 // External Modules ----------------------------------------------------------
 
@@ -9,12 +10,18 @@ import {BaseQueryFn, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 
 // Internal Modules ----------------------------------------------------------
 
+import LocalStorage from "./LocalStorage";
+import {LOGIN_DATA_KEY} from "../constants";
+import {LoginData} from "../types";
+
+const loginData = new LocalStorage<LoginData>(LOGIN_DATA_KEY);
+
 // Public Objects ------------------------------------------------------------
 
 /**
  * Return the base URL we should pass to for API slices.
  */
-export const BASE_URL = () : string => {
+export const API_BASE_URL = () : string => {
     return "/api"; // For testing via local dev server (see "proxy" in package.json)
 //    return "http://localhost:2999"; // For testing via json-server
 }
@@ -24,7 +31,7 @@ export const BASE_URL = () : string => {
  *
  * @param baseUrl                       Base URL to be configured
  */
-export const apiBaseQuery = (baseUrl: string = BASE_URL()): BaseQueryFn => {
+export const apiBaseQuery = (baseUrl: string = API_BASE_URL()): BaseQueryFn => {
     return standardBaseQuery(baseUrl);
 }
 
@@ -44,6 +51,23 @@ export const appendQueryParameters = (url: string, params?: any): string => {
         }
     }
     return `${url}${appended}`;
+}
+
+/**
+ * Return the base URL we should pass to for OAUTH slices.
+ */
+export const OAUTH_BASE_URL = () : string => {
+    return "/oauth"; // For testing via local dev server (see "proxy" in package.json)
+//    return "http://localhost:2999"; // For testing via json-server
+}
+
+/**
+ * Return the baseQuery implementation we should use for OAUTH slices.
+ *
+ * @param baseUrl                       Base URL to be configured
+ */
+export const oauthBaseQuery = (baseUrl: string = OAUTH_BASE_URL()): BaseQueryFn => {
+    return standardBaseQuery(baseUrl);
 }
 
 // Private Objects -----------------------------------------------------------
@@ -95,6 +119,20 @@ const axiosBaseQuery = (baseUrl: string): BaseQueryFn<{
  */
 const standardBaseQuery = (baseUrl: string) => {
     // Can customize with prepareHeaders(headers) element
-    return fetchBaseQuery({ baseUrl: baseUrl });
+    return fetchBaseQuery({
+        baseUrl: baseUrl,
+        prepareHeaders: (headers) => {
+            const currentData = loginData.value; // TODO call refresh
+            if (currentData.loggedIn) {
+                if (currentData.accessToken) {
+                    headers.set("Authorization", `Bearer ${currentData.accessToken}`);
+                }
+                if (currentData.username) {
+                    headers.set("x-username", currentData.username);
+                }
+            }
+            return headers;
+        }
+    });
 }
 

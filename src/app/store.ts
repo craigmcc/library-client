@@ -9,6 +9,7 @@ import {configureStore, Action, ThunkAction} from '@reduxjs/toolkit';
 // Internal Modules ----------------------------------------------------------
 
 import {LibraryApi} from "../features/library/LibraryApi";
+import {LoginApi} from "../features/login/LoginApi";
 import {UserApi} from "../features/user/UserApi";
 import counterReducer from '../features/counter/counterSlice';
 
@@ -18,10 +19,12 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware()
         .concat(LibraryApi.middleware)
+        .concat(LoginApi.middleware)
         .concat(UserApi.middleware);
   },
   reducer: {
     [LibraryApi.reducerPath]: LibraryApi.reducer,
+    [LoginApi.reducerPath]: LoginApi.reducer,
     [UserApi.reducerPath]: UserApi.reducer,
     counter: counterReducer,
   },
