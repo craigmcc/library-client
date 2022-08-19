@@ -18,7 +18,7 @@
     "@types/react-dom": "^18.0.6",
     "axios": "^0.27.2",
     "bootstrap": "^5.2.0",
-    "date-fns": "^2.29.1",
+    "date-fns": "^2.29.2",
     "msw": "^0.44.2",
     "react": "^18.2.0",
     "react-bootstrap": "^2.5.0",
